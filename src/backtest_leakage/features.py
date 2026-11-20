@@ -6,8 +6,8 @@ advance. The level anchor is the deliberate exception. Its value at t is the mea
 the target over the available rows nearest t in time, a fixed count of them. That one
 design choice is what turns a shuffled split into a leak: under a time-ordered split the
 nearest available rows are all in the past and the anchor trails the level, while under a
-shuffled split they straddle t and the anchor sits on the level. The leak is a property of the protocol, not of the code
-that builds the feature.
+shuffled split they straddle t and the anchor sits on the level. The leak is a property of
+the protocol, not of the code that builds the feature.
 """
 
 from __future__ import annotations
