@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+coverage.json
+htmlcov/
+reports/
+node_modules/
+.venv/
+venv/
+# Evidence re-rendered from committed sources; the committed SVG/PNG/GIF stay tracked.
+docs/video/*.webm

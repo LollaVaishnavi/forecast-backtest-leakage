@@ -1,0 +1,79 @@
+# policy.toml
+#
+# Every knob the leakage check depends on lives here, with the reason it has the
+# value it does. Nothing in src/ hardcodes one of these. Loaded with the stdlib
+# tomllib, so there is no runtime dependency to read it.
+
+[backtest]
+# Number of contiguous folds the series is cut into. Both the k-fold (shuffled)
+# and the walk-forward (ordered) scheme use the SAME fold boundaries, so the only
+# difference between them is whether a training fold is allowed to sit after the
+# test fold in time. Ten keeps each test fold large enough that its RMSE is not
+# dominated by a handful of points, while leaving enough folds for the walk-forward
+# scheme to have more than a couple of honest steps.
+n_folds = 10
+
+# Walk-forward only. Rows dropped between the end of the training window and the
+# start of the test fold, to stop a trailing-window feature of length `embargo`
+# from straddling the boundary and leaking the first test rows into training.
+# Set to the longest trailing window any causal feature uses (see [features]).
+embargo = 7
+
+# Walk-forward only. "expanding" trains on all rows before the test fold.
+# "sliding" trains on a fixed-width trailing window. Expanding is the honest
+# default because it uses all legitimately-available history; sliding is offered
+# for non-stationary series where distant history hurts. See ADR 001.
+scheme = "expanding"
+
+[features]
+# Trailing window (in days) for the causal rolling-mean feature. A causal feature
+# at row t may only read rows <= t, so the window looks strictly backwards.
+rolling_window = 7
+
+# Lag features, in days. Each lag k uses the target at t-k, which is causal.
+lags = [1, 7, 14]
+
+# Half-width (in days) of the window used by the level-anchor feature, the one
+# feature in this repository that can leak. The anchor at row t is the mean of the
+# target over rows within this half-width of t that the protocol has made available
+# for fitting. Under a time-ordered split those available rows are all in the past,
+# so the anchor trails the level; under a shuffled split they straddle t, so the
+# anchor sits on the level and leaks it. The channel is the same feature either way.
+anchor_halfwidth = 10
+
+# When true, every transform (scaler, rolling stats) is FIT on the training rows
+# of each fold and only APPLIED to the test rows. When false, transforms are fit
+# once over the whole series before splitting, which is the single most common
+# real-world feature leak. Fold-fit is the honest default; the false path exists
+# so the tool can measure how large that leak is. See ADR 002.
+fold_fit = true
+
+[model]
+# Ridge regularisation strength. The model is deliberately a plain linear ridge:
+# the subject of this repository is the evaluation protocol, not the estimator, and
+# a simple model makes a score gap attributable to the protocol rather than to
+# model variance. See ADR 004.
+ridge_alpha = 1.0
+
+[null]
+# The leakage gap for a clean pipeline is not zero: a non-stationary series makes a
+# time-ordered backtest look worse than a shuffled one for reasons that are not
+# leakage. So the gap is calibrated against a null distribution estimated from
+# clean series, and a gap only counts as leakage when it clears the null band.
+
+# Number of independent clean series used to estimate the null band. More series
+# tighten the band; the resolution floor on the false-alarm rate is 1/n_series.
+n_series = 40
+
+# Upper percentile of the clean-gap distribution used as the leakage threshold.
+# A gap above this percentile is flagged. 95 trades a ~5 percent false-alarm rate
+# for sensitivity; raise it to be more conservative. See ADR 003.
+threshold_percentile = 95.0
+
+[verdict]
+# A gap can sit below the threshold either because there is no leak OR because the
+# backtest has too few folds to resolve a leak of this size. When the gap is below
+# threshold but the smallest leak the current fold count could resolve is larger
+# than `min_detectable_gap`, the verdict is "inconclusive" rather than "clean", so
+# the tool never reports absence of evidence as evidence of absence. See ADR 003.
+min_detectable_gap = 0.05
