@@ -3,11 +3,10 @@
 Every feature here except the level anchor is strictly causal: a row at time t reads
 only the target at times strictly before t, or the calendar, which is known in
 advance. The level anchor is the deliberate exception. Its value at t is the mean of
-the target over the rows the protocol has made available for fitting that fall within
-a fixed half-width of t. That one design choice is what turns a shuffled split into a
-leak: under a time-ordered split the available rows near t are all in the past and the
-anchor trails the level, while under a shuffled split the available rows straddle t and
-the anchor sits on the level. The leak is a property of the protocol, not of the code
+the target over the available rows nearest t in time, a fixed count of them. That one
+design choice is what turns a shuffled split into a leak: under a time-ordered split the
+nearest available rows are all in the past and the anchor trails the level, while under a
+shuffled split they straddle t and the anchor sits on the level. The leak is a property of the protocol, not of the code
 that builds the feature.
 """
 
@@ -36,33 +35,35 @@ def usable_rows(n: int, fp: FeaturePolicy) -> np.ndarray:
 def _anchor(
     y: np.ndarray, rows: np.ndarray, available: np.ndarray, half: int
 ) -> np.ndarray:
-    """Local mean of the target over available rows within ``half`` days of each row.
+    """Mean of the target over the available rows nearest each row in time.
 
-    Implemented with prefix sums over the available-masked series, so the cost is linear
-    in the series length. When a row has no available neighbour inside the window, the
-    anchor falls back to the mean over all available rows, which keeps the feature defined
-    at the edges without inventing a value.
+    The anchor at t is the mean of the ``2 * half`` available rows closest to t by day
+    index. Using the nearest available rows rather than a fixed calendar window is what
+    keeps the feature well behaved under a time-ordered split: with only the past
+    available, the nearest rows are the most recent ones, so the anchor is a proper
+    trailing mean that never degenerates into a global average. Under a shuffled split
+    the nearest available rows straddle t, so the same code returns a centred mean that
+    sits on the level. The number of rows averaged is identical in both cases; only
+    their position relative to t changes, which is the leak.
     """
-    n = y.size
-    mask = np.zeros(n, dtype=np.float64)
-    mask[available] = 1.0
-    masked_y = np.where(mask > 0, y, 0.0)
+    av = np.sort(np.asarray(available, dtype=np.int64))
+    k = min(2 * half, av.size)
+    if k == 0:
+        return np.zeros(rows.size, dtype=np.float64)
 
-    prefix_y = np.concatenate([[0.0], np.cumsum(masked_y)])
-    prefix_c = np.concatenate([[0.0], np.cumsum(mask)])
-
-    lo = np.maximum(rows - half, 0)
-    hi = np.minimum(rows + half, n - 1)
-    window_sum = prefix_y[hi + 1] - prefix_y[lo]
-    window_cnt = prefix_c[hi + 1] - prefix_c[lo]
-
-    global_cnt = prefix_c[-1]
-    global_mean = prefix_y[-1] / global_cnt if global_cnt > 0 else 0.0
-    with np.errstate(invalid="ignore", divide="ignore"):
-        anchor = np.where(
-            window_cnt > 0, window_sum / np.where(window_cnt > 0, window_cnt, 1.0), global_mean
-        )
-    return anchor
+    pos = np.searchsorted(av, rows)
+    out = np.empty(rows.size, dtype=np.float64)
+    m = av.size
+    for i, (t, p) in enumerate(zip(rows, pos, strict=True)):
+        lo = max(0, p - k)
+        hi = min(m, p + k)
+        candidate = av[lo:hi]
+        # Of the up-to-2k candidates around the insertion point, keep the k nearest in
+        # index distance; those are the k rows whose target the anchor averages.
+        nearest = np.argsort(np.abs(candidate - t), kind="stable")[:k]
+        chosen = candidate[nearest]
+        out[i] = float(np.mean(y[chosen]))
+    return out
 
 
 def build_matrix(
