@@ -1,0 +1,23 @@
+{
+  "segments": [
+    {
+      "command": "btleak --seed 2 --clean",
+      "output": "backtest-leakage: seed=2 pipeline=clean\n\n  shuffled k-fold (naive)        RMSE 7.14\n  walk-forward, fold-fit (honest) RMSE 8.76\n  walk-forward, global features   RMSE 8.76\n  blocked k-fold (future in train) RMSE 7.10\n\n  leakage gap (honest - kfold):   1.62\n  null threshold (95th pct clean): 3.83  (median 0.70, margin 3.13)\n\n  verdict: INCONCLUSIVE  (exit 2)",
+      "exit_code": 2,
+      "seconds": 2.34
+    },
+    {
+      "command": "btleak --seed 2 --leaky",
+      "output": "backtest-leakage: seed=2 pipeline=leaky\n\n  shuffled k-fold (naive)        RMSE 6.86\n  walk-forward, fold-fit (honest) RMSE 11.99\n  walk-forward, global features   RMSE 7.06\n  blocked k-fold (future in train) RMSE 8.46\n\n  leakage gap (honest - kfold):   5.13\n  null threshold (95th pct clean): 3.83  (median 0.70, margin 3.13)\n\n  verdict: LEAK  (exit 3)",
+      "exit_code": 3,
+      "seconds": 2.44
+    },
+    {
+      "command": "python tools/check_numbers.py",
+      "output": "check_numbers: all 20 metrics anchored, no stray statistics",
+      "exit_code": 0,
+      "seconds": 0.06
+    }
+  ],
+  "note": "every line is real captured stdout; segments paced by measured wall time"
+}

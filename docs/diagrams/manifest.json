@@ -1,0 +1,5 @@
+{
+  "source": "README.md ```mermaid-source",
+  "output": "architecture.svg",
+  "html_labels": false
+}

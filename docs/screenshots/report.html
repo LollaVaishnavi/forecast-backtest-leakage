@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>backtest-leakage report: seed 2, leaky pipeline</title>
+<style>
+body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; color: #1a1a1a;
+       background: #ffffff; margin: 0; padding: 32px; }
+h1 { font-size: 22px; margin: 0 0 4px 0; }
+.sub { color: #555; font-size: 13px; margin: 0 0 20px 0; }
+.badge { display: inline-block; padding: 8px 16px; border-radius: 6px; color: #ffffff;
+         font-weight: 700; font-size: 15px; letter-spacing: 0.5px; }
+.badge-leak { background: #b00020; }
+.badge-clean { background: #1b7f3b; }
+.badge-inconclusive { background: #b26a00; }
+table { border-collapse: collapse; margin: 18px 0; font-size: 14px; }
+th, td { border: 1px solid #ccc; padding: 7px 12px; text-align: right; }
+th { background: #f2f2f2; text-align: left; }
+td.label { text-align: left; }
+.honest { background: #eef6ff; }
+.gapline { font-size: 16px; margin: 14px 0; }
+.num { font-weight: 700; }
+.note { color: #555; font-size: 13px; max-width: 640px; line-height: 1.5; }
+</style></head>
+<body>
+<h1>Leakage gap report</h1>
+<p class="sub">seed 2, leaky pipeline, 10 folds,
+scheme expanding</p>
+<span class="badge badge-leak">LEAK DETECTED</span>
+<table>
+<thead><tr><th>scheme</th><th>RMSE</th><th>fold RMSE std</th><th>test rows</th></tr></thead>
+<tbody><tr><td class="label">shuffled k-fold (the naive estimate)</td><td>6.86</td><td>0.49</td><td>406</td></tr><tr class="honest"><td class="label">walk-forward, fold-fit (honest)</td><td>11.99</td><td>4.33</td><td>365</td></tr><tr><td class="label">walk-forward, global features</td><td>7.06</td><td>1.21</td><td>365</td></tr><tr><td class="label">blocked k-fold (future in training)</td><td>8.46</td><td>0.97</td><td>406</td></tr></tbody>
+</table>
+<p class="gapline">Leakage gap (honest minus k-fold):
+<span class="num">5.13</span> RMSE, which is above the null threshold of
+<span class="num">3.83</span>.</p>
+<p class="note">The null threshold is the 95th percentile
+of the gap measured on 40 clean series drawn from the same process, so it is
+the gap a drift alone can open. The honest row is the only estimate that trains strictly on
+the past; the k-fold row is what a shuffled split would have reported.</p>
+</body></html>
