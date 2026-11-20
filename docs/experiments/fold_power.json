@@ -1,0 +1,43 @@
+{
+  "metrics": {
+    "band_margin_at_max_folds": 1.5,
+    "band_margin_at_shipped": 3.03,
+    "clean_certifiable_in_range": false,
+    "max_folds_swept": 20,
+    "min_detectable_gap": 0.05,
+    "shipped_n_folds": 10
+  },
+  "name": "fold_power",
+  "rows": [
+    {
+      "band_margin": 0.92,
+      "detection_rate": 1.0,
+      "false_alarm": 0.1,
+      "n_folds": 5
+    },
+    {
+      "band_margin": 3.24,
+      "detection_rate": 0.95,
+      "false_alarm": 0.05,
+      "n_folds": 8
+    },
+    {
+      "band_margin": 3.03,
+      "detection_rate": 0.95,
+      "false_alarm": 0.05,
+      "n_folds": 10
+    },
+    {
+      "band_margin": 0.96,
+      "detection_rate": 1.0,
+      "false_alarm": 0.05,
+      "n_folds": 15
+    },
+    {
+      "band_margin": 1.5,
+      "detection_rate": 0.95,
+      "false_alarm": 0.05,
+      "n_folds": 20
+    }
+  ]
+}

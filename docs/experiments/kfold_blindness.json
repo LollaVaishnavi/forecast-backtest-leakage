@@ -1,0 +1,26 @@
+{
+  "metrics": {
+    "kfold_clean_rmse": 7.2,
+    "kfold_leak_rmse": 6.87,
+    "kfold_prefers_leak": true,
+    "kfold_separation_pct": 5,
+    "kfold_understatement_pct": 96,
+    "n_series": 40,
+    "wf_clean_rmse": 8.52,
+    "wf_degradation_pct": 58,
+    "wf_leak_rmse": 13.48
+  },
+  "name": "kfold_blindness",
+  "rows": [
+    {
+      "kfold_rmse": 7.2,
+      "pipeline": "clean",
+      "walkforward_rmse": 8.52
+    },
+    {
+      "kfold_rmse": 6.87,
+      "pipeline": "leaked",
+      "walkforward_rmse": 13.48
+    }
+  ]
+}

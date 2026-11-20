@@ -1,0 +1,21 @@
+{
+  "metrics": {
+    "feature_fit_gap_mean": 5.5,
+    "feature_fit_share_pct": 54,
+    "membership_gap_mean": 4.68,
+    "membership_share_pct": 46
+  },
+  "name": "gap_decomposition",
+  "rows": [
+    {
+      "channel": "feature-fit (survives time order)",
+      "mean_rmse_gap": 5.5,
+      "share_pct": 54
+    },
+    {
+      "channel": "membership (future in training)",
+      "mean_rmse_gap": 4.68,
+      "share_pct": 46
+    }
+  ]
+}

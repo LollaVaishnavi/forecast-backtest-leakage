@@ -1,0 +1,113 @@
+{
+  "anchors": {
+    "coverage_line_pct": [
+      "{}% line coverage"
+    ],
+    "detection_pct": [
+      "{}% of the seeded leaks",
+      "catches {}%"
+    ],
+    "feature_fit_share_pct": [
+      "{}% feature-fit",
+      "{}% survives"
+    ],
+    "folds_swept_high": [
+      "up to {} folds",
+      "{} folds"
+    ],
+    "honest_leaky_seed0_rmse": [
+      "about {} RMSE",
+      "to {} RMSE"
+    ],
+    "kfold_clean_rmse": [
+      "clean pipeline's {}",
+      "{} on the clean"
+    ],
+    "kfold_leak_rmse": [
+      "leaked pipeline at {}",
+      "rates it {}"
+    ],
+    "kfold_separation_pct": [
+      "within {}%",
+      "{}% of each other"
+    ],
+    "kfold_understatement_pct": [
+      "{}% below",
+      "by {}%"
+    ],
+    "margin_to_detectable_ratio": [
+      "{} times the smallest",
+      "{}x the smallest"
+    ],
+    "max_clean_gap": [
+      "as large as {}",
+      "a gap of {}"
+    ],
+    "membership_share_pct": [
+      "{}% membership",
+      "{}% from letting"
+    ],
+    "n_clean_eval": [
+      "one in {}",
+      "{} held-out"
+    ],
+    "n_series": [
+      "{} clean series",
+      "{}-series"
+    ],
+    "null_threshold": [
+      "threshold of {}",
+      "{} RMSE threshold"
+    ],
+    "smallest_band_margin": [
+      "never below {}",
+      "narrowest {}"
+    ],
+    "tests_total": [
+      "{} tests"
+    ],
+    "wf_clean_rmse": [
+      "honest {}",
+      "clean pipeline honestly scores {}"
+    ],
+    "wf_degradation_pct": [
+      "{}% worse",
+      "{}% higher"
+    ],
+    "wf_leak_rmse": [
+      "true error is {}",
+      "honest error of {}"
+    ]
+  },
+  "checked_documents": [
+    "README.md",
+    "docs/adr/ADR-001-walk-forward-as-the-honest-estimator.md",
+    "docs/adr/ADR-002-fold-fit-features.md",
+    "docs/adr/ADR-003-gap-statistic-and-null-calibration.md",
+    "docs/adr/ADR-004-a-deliberately-dull-model.md",
+    "docs/adr/ADR-005-synthetic-deterministic-fixture.md"
+  ],
+  "metrics": {
+    "coverage_line_pct": 100,
+    "detection_pct": 100,
+    "feature_fit_share_pct": 54,
+    "folds_swept_high": 20,
+    "honest_leaky_seed0_rmse": 11.4,
+    "kfold_clean_rmse": 7.2,
+    "kfold_leak_rmse": 6.9,
+    "kfold_separation_pct": 5,
+    "kfold_understatement_pct": 96,
+    "margin_to_detectable_ratio": 18,
+    "max_clean_gap": 11.8,
+    "membership_share_pct": 46,
+    "n_clean_eval": 40,
+    "n_series": 40,
+    "null_threshold": 3.8,
+    "smallest_band_margin": 0.9,
+    "tests_total": 66,
+    "wf_clean_rmse": 8.5,
+    "wf_degradation_pct": 58,
+    "wf_leak_rmse": 13.5
+  },
+  "note": "every value here is produced by running the suite and the four experiments"
+}
